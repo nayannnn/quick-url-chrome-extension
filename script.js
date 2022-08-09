@@ -17,11 +17,19 @@ saveURLBtn.addEventListener("click", function(){
     render(myLeads)
     localStorage.setItem("myLeads", JSON.stringify(myLeads))
     textArea.value = ""
-    })
+})
+
+document.getElementById("saveTab").addEventListener("click", function(){
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        myLeads.push(tabs[0].url);
+        render(myLeads)
+        localStorage.setItem("myLeads", JSON.stringify(myLeads))
+    });
+})
 
 function render(list){
     let listItem = ""
-    for (let j=0; j<list.length; j++){
+    for (let j=list.length-1; j>-1; j--){
         listItem += `
         <li>
             <a href="${list[j]}" target="_blank">${list[j]}</a>
@@ -30,9 +38,10 @@ function render(list){
     }
 }
 
-resetBtn.addEventListener("click", function(){
+resetBtn.addEventListener("dblclick", function(){
     localStorage.clear()
     myLeads = []
     textArea.value = ""
+    ul.innerHTML = ""
     render(myLeads)
 })
