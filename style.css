@@ -50,6 +50,23 @@ ul{
     margin: 0;
 }
 
+li{
+    display: flex;
+    justify-content: space-between;
+}
+
+.hideBtn{
+    padding: 0;
+    background-color: transparent;
+    color: grey;
+    font-weight: 100;
+}
+
+.hideBtn:hover{
+    text-decoration: underline;
+    background-color: transparent;
+}
+
 #resetContainer{
     text-align: center;
 }
@@ -68,4 +85,3 @@ ul{
 #reset:hover{
     color: blue;
 }
-

@@ -21,7 +21,7 @@ saveURLBtn.addEventListener("click", function(){
 
 document.getElementById("saveTab").addEventListener("click", function(){
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        myLeads.push(tabs[0].url);
+        myLeads.push(`${tabs[0].title} -  ${tabs[0].url}`);
         render(myLeads)
         localStorage.setItem("myLeads", JSON.stringify(myLeads))
     });
@@ -33,6 +33,7 @@ function render(list){
         listItem += `
         <li>
             <a href="${list[j]}" target="_blank">${list[j]}</a>
+            <button class="hideBtn" onclick="this.parentElement.style.visibility = 'hidden';">Hide</button>
         </li>`
         ul.innerHTML = listItem
     }
