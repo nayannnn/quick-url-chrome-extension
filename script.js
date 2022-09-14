@@ -5,22 +5,13 @@ const resetBtn = document.getElementById("reset")
 const ul = document.getElementById("ul-el")
 const deleteBtns = document.getElementsByClassName("dltBtn")
 const copyBtns = document.getElementsByClassName("copyBtns")
-// let check = "a"
 
 if (JSON.parse(localStorage.getItem("links"))){
     links = JSON.parse(localStorage.getItem("links"))
     render(links)
 }
 
-// function checkURL(linkCheck){
-//     if (ul.innerHTML.includes(linkCheck)){
-//         check = "b"
-//     }
-// }
-
 saveURLBtn.addEventListener("click", function(){
-    // checkURL(textArea.value)
-    // if (check == "a") {
     if (textArea.value){
         if (textArea.value.toLowerCase().indexOf("https://") == 0 || textArea.value.toLowerCase().indexOf("http://") == 0){
             links.unshift(textArea.value, textArea.value)
@@ -34,14 +25,6 @@ saveURLBtn.addEventListener("click", function(){
         textArea.value = ""
         window.location.reload();
     }
-    // } else if (textArea.value){
-    //     document.getElementById("exists").style.display="block"
-    //     textArea.value = ""
-    //     check = "a"
-    //     setTimeout(function(){
-    //         window.location.reload();
-    //     }, 2000);
-    // }
 })
 
 textArea.addEventListener("keypress", function(event) {
@@ -52,25 +35,13 @@ textArea.addEventListener("keypress", function(event) {
 });
 
 document.getElementById("saveTab").addEventListener("click", function(){
-    // chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-    //     checkURL(`${tabs[0].url}`)
-    // })
-    // if (check == "a"){
-        chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-            links.unshift(`${tabs[0].title}`);
-            links.unshift(`${tabs[0].url}`);
-            render(links)
-            localStorage.setItem("links", JSON.stringify(links))
-            window.location.reload();
-        })
-    // } else {
-    //     document.getElementById("exists").style.display="block"
-    //     textArea.value = ""
-    //     check = "a"
-    //     setTimeout(function(){
-    //         window.location.reload()
-    //     }, 2000)
-    // }
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+        links.unshift(`${tabs[0].title}`);
+        links.unshift(`${tabs[0].url}`);
+        render(links)
+        localStorage.setItem("links", JSON.stringify(links))
+        window.location.reload();
+    })
 })
 
 function render(list){
