@@ -1,1 +1,1 @@
-Lead Tracker Chrome Extension
+Quickly save and remove your URLs.
