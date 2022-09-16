@@ -73,6 +73,8 @@ li{
     border-radius: 5px;
     gap: 5px;
     align-items: center;
+    overflow-wrap: break-word;
+    /* overflow: hidden; */ 
 }
 
 li:hover{
@@ -82,6 +84,7 @@ li:hover{
 a{
     text-decoration: none;
     color: black;
+    overflow: hidden;
 }
 
 .tabTitle{
