@@ -1,13 +1,21 @@
+:root{
+    --var-bg-color: #f5f5f5;
+    --var-accent-color: rgb(24, 133, 216);
+    --var-button-hover: rgb(23, 95, 150);
+    --var-width: 400px;
+    --var-list-accent: rgb(24, 133, 216, 0.05);
+}
+
 body{
     border: none;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 450px;
+    width: var(--var-width);
     margin-inline: auto;
-    background-color: #E8F9FD;
+    background-color: var(--var-bg-color);
     padding: 10px;
-    min-height: 400px;
+    min-height: 500px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -25,7 +33,7 @@ h1{
 
 input{
     height: 30px;
-    border: 2px solid #59CE8F;
+    border: 2px solid;
     border-radius: 5px;
 }
 
@@ -43,13 +51,13 @@ button{
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: black;
+    background-color: var(--var-accent-color);
     color: #E8F9FD;
-    transition: background-color 100ms ease;
+    transition: background-color 200ms ease;
 }
 
 button:hover{
-    background-color: #42ae74;
+    background-color: var(--var-button-hover);
 }
 
 ul{
@@ -59,7 +67,7 @@ ul{
 }
 
 li{
-    padding: 5px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     border-radius: 5px;
@@ -68,7 +76,7 @@ li{
 }
 
 li:hover{
-    background-color: #42ae740f;
+    background-color: var(--var-list-accent);
 }
 
 a{
