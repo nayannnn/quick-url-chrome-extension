@@ -9,13 +9,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Quick URLs</h1>
-        <input placeholder= "Paste URL here or click on Save Tab button to save current tab" type="text" id = "textArea">
-        <p id="exists">URL already saved!</p>
-        <div>
-            <button id="saveURL">Save URL</button>        
+        <div id="header">
+            <h1>Quick URLs</h1>
             <button id="saveTab">Save Tab</button>
         </div>
+        <div id="save-url">
+            <input placeholder= "Paste URL here, then press enter." type="text" id = "textArea">
+            <button id="saveURL">Save URL</button>   
+        </div>
+        <p id="note"></p>
         <ul id="ul-el"></ul>
     </div>
     <div id="resetContainer">

@@ -4,6 +4,7 @@
     --var-button-hover: rgb(23, 95, 150);
     --var-width: 400px;
     --var-list-accent: rgb(24, 133, 216, 0.05);
+    --var-input-padding: 5px;
 }
 
 body{
@@ -26,24 +27,33 @@ body{
     width: 100%;
 }
 
+#header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 h1{
     margin: 0;
     font-size: 1.5em;
+    display: inline;
+}
+
+#save-url{
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
 }
 
 input{
     height: 30px;
     border: 2px solid;
     border-radius: 5px;
+    padding-inline: var(--var-input-padding);
+    width: 100%;
 }
 
-#exists{
-    margin: 0;
-    color: grey;
-    font-size: 14px;
-    font-style: italic;
-    display: none;
-}
 
 button{
     padding: 10px 25px;
@@ -54,11 +64,22 @@ button{
     background-color: var(--var-accent-color);
     color: #E8F9FD;
     transition: background-color 200ms ease;
+    min-width: max-content;
 }
 
 button:hover{
     background-color: var(--var-button-hover);
 }
+
+#note{
+    margin: 0;
+    color: rgb(255, 0, 0);
+    font-size: 14px;
+    font-style: italic;
+    display: none;
+    padding-inline: var(--var-input-padding);
+    margin-bottom: -10px;
+}   
 
 ul{
     list-style-type: none;
@@ -67,7 +88,7 @@ ul{
 }
 
 li{
-    padding: 10px;
+    padding: var(--var-input-padding);
     display: flex;
     justify-content: space-between;
     border-radius: 5px;
@@ -119,7 +140,7 @@ a{
 
 #reset{
     padding: 0;
-    color: black;
+    color: rgb(57, 57, 57);
     background-color: transparent;
     font-weight: normal;
     margin-inline: auto;
