@@ -121,7 +121,7 @@ a{
     gap: 5px;
 }
 
-.listButtons{
+.listButtons, .undo{
     padding: 0;
     background-color: transparent;
     color: grey;
@@ -129,9 +129,14 @@ a{
     text-align: right;
 }
 
-.listButtons:hover{
+.listButtons:hover, .undo:hover{
     text-decoration: underline;
     background-color: transparent;
+}
+
+.text-deleted{
+    font-size: 13.33px;
+    font-style: italic;
 }
 
 #resetContainer{
