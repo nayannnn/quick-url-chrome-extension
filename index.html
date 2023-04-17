@@ -6,23 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quick URLs</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fontawesomefonts/css/all.css">
 </head>
 <body>
+    <script type="module" src="script.js"></script>
     <div class="container">
         <div id="header">
-            <h1>Quick URLs</h1>
-            <button id="saveTab">Save Tab</button>
+            <!-- <h1>Quick URLs</h1> -->
+            <button id="saveTab">Save current tab</button>
+        </div>
+        <div>
+            <p id="or">OR</p>
         </div>
         <div id="save-url">
-            <input placeholder= "Paste URL here, then press enter." type="text" id = "textArea">
-            <button id="saveURL">Save URL</button>   
+            <input placeholder= "Paste your URL here and press Enter." type="text" id = "textArea">
         </div>
+        <button id="saveURLButton" style="display: none;">Save URL</button>
         <p id="note"></p>
-        <ul id="ul-el"></ul>
+        <p id="previousLinksText">Previously Saved Links:</p>
+        <div class="linkContainer">
+            <div id="allLinks">
+                <ul id="ul-el"></ul>
+            </div>
+            <ul class="linkTabs">
+                <li class="tab-list"><button class="tab" id="tab1">List 1</button></li>
+                <li class="tab-list"><button class="tab" id="tab2">List 2</button></li>
+                <li class="tab-list"><button class="tab" id="tab3">List 3</button></li>
+                <li class="tab-list"><button class="tab" id="tab4">List 4</button></li>
+            </ul>
+        </div>
     </div>
-    <div id="resetContainer">
-        <button id="reset">Double click here to delete all</button>
+    <div id="footer">
+        <p class="footerText">quick url extension by nyn</p>
     </div>
-    <script type="module" src="script.js"></script>
+    
 </body>
 </html>

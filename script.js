@@ -1,29 +1,62 @@
 import {URLcheck} from '/url-print-check.js'
-let links = [""]
+
+let urlListOne = [""]
+let urlListTwo = [""]
+let tabCache = [""]
 let textArea = document.getElementById("textArea")
-const saveURLBtn = document.getElementById("saveURL")
+const saveURLBtn = document.getElementById("saveURLButton")
 const resetBtn = document.getElementById("reset")
 const ul = document.getElementById("ul-el")
-const deleteBtns = document.getElementsByClassName("dltBtn")
+const removeBtns = document.getElementsByClassName("removeBtns")
 const copyBtns = document.getElementsByClassName("copyBtns")
-let undo = [""]
+const renameBtns = document.getElementsByClassName("renameBtns")
+const tabs = document.getElementsByClassName("tab")
+// let undo = [""]
 
-if (JSON.parse(localStorage.getItem("links"))){
-    links = JSON.parse(localStorage.getItem("links"))
-    render(links)
+document.getElementsByClassName("linkTabs")[0].addEventListener("contextmenu", function(){
+    event.preventDefault();
+})
+
+setTimeout(() => {
+    tabs[0].click()
+}, 100)
+
+if (JSON.parse(localStorage.getItem("urlListOne"))){
+    urlListOne = JSON.parse(localStorage.getItem("urlListOne"))
+    render(urlListOne)
 }
 
-//For every URL saved, two indexes are used in the 'links' array.
-//Firstly, one index is used for saving the link.
-//Then, second index is used for title.
+for (let tab of tabs){
+    tab.addEventListener("click", function(){
+        for (let tab of tabs){
+            tab.classList.remove("active")
+        }
+        this.classList.add("active")
+        tabCache[0] = this.indexOf()
+        console.log(tabCache[0])
+        localStorage.setItem("tabCache", JSON.stringify(tabCache))
+        document.getElementById("ul-el").style.display = "none"
+    })
+}
 
+tabs[0].addEventListener("click", function(){
+    document.getElementById("ul-el").style.display = "block"
+})
+
+//For every URL saved, two indexes are used in the 'urlListOne' array.
+//First index is used for saving the link.
+//Second index is used for title.
+
+//Save URL from input placeholder
 saveURLBtn.addEventListener("click", function(){
     if ( textArea.value && textArea.value.indexOf(" ") !=0 ){
-        URLcheck(links)
-        render(links)
-        localStorage.setItem("links", JSON.stringify(links))
-        textArea.value = ""
-        window.location.reload();
+        if (document.getElementsByClassName("tab")[0].classList.contains("active")){
+            URLcheck(urlListOne)
+            render(urlListOne)
+            localStorage.setItem("urlListOne", JSON.stringify(urlListOne))
+            textArea.value = ""
+            window.location.reload();
+        }
     } else {
         document.getElementById("note").style.display = "block"
         document.getElementById("note").innerText = "Invalid URL"
@@ -33,6 +66,7 @@ saveURLBtn.addEventListener("click", function(){
     }
 })
 
+//Save URL from input placeholder by pressing 'Enter'
 textArea.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -40,13 +74,16 @@ textArea.addEventListener("keypress", function(event) {
     }
 });
 
+//Save current tab
 document.getElementById("saveTab").addEventListener("click", function(){
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-        links.unshift(`${tabs[0].title}`);
-        links.unshift(`${tabs[0].url}`);
-        render(links)
-        localStorage.setItem("links", JSON.stringify(links))
-        window.location.reload();
+        if (document.getElementsByClassName("tab")[0].classList.contains("active")){
+            urlListOne.unshift(`${tabs[0].title}`);
+            urlListOne.unshift(`${tabs[0].url}`);
+            render(urlListOne)
+            localStorage.setItem("urlListOne", JSON.stringify(urlListOne))
+            window.location.reload();
+        }
     })
 })
 
@@ -60,34 +97,36 @@ function render(list){
             if (list[j] == url){
                 if (list[j].includes(" ") || (list[j].includes(".") == false)){
                     listItem += `
-                    <li id="list-item-${j}">
+                    <li class = "list-item" id="list-item-${j}">
                         <a style="cursor: auto;"><span class= "tabTitle">${url}</span></a>
-                        <div class = "listBtnContainer">
-                            <button id="${j}" type="button" class="listButtons copyBtns">Copy</button>
-                            <button id="${j}" type="button" class="listButtons dltBtn">Delete</button>
+                        <div class = "listBtnBox">
+                            <button id="${j}" type="button" class="listButtons copyBtns"><i class="fa-solid fa-copy list-icons icon-copy"></i>Copy</button>
+                            <button id="${j}" type="button" class="listButtons removeBtns"><i class="fa-solid fa-trash list-icons icon-remove"></i>Remove</button>
+                            <button id="${j}" type="button" class="listButtons renameBtns"><i class="fa-solid fa-pen-to-square list-icons icon-rename"></i>Rename</button>
                         </div>
                     </li>`
                 } else {
                     listItem += `
-                    <li id="list-item-${j}">
-                    <a href="${url}" target="_blank"><span class= "tabTitle">${url}</span></a>
-                    <div class = "listBtnContainer">
-                    <button id="${j}" type="button" class="listButtons copyBtns">Copy</button>
-                    <button id="${j}" type="button" class="listButtons dltBtn">Delete</button>
-                    </div>
+                    <li class = "list-item" id="list-item-${j}">
+                        <a href="${url}" target="_blank"><span class= "tabTitle">${url}</span></a>
+                        <div class = "listBtnBox">
+                            <button id="${j}" type="button" class="listButtons copyBtns"><i class="fa-solid fa-copy list-icons icon-copy"></i>Copy</button>
+                            <button id="${j}" type="button" class="listButtons removeBtns"><i class="fa-solid fa-trash list-icons icon-remove"></i>Remove</button>
+                            <button id="${j}" type="button" class="listButtons renameBtns"><i class="fa-solid fa-pen-to-square list-icons icon-rename"></i>Rename</button>
+                        </div>
                     </li>`
                 }
             } else {
                 listItem += `
-                <li id="list-item-${j}">
-                    <a href="${url}" target="_blank"><span class= "tabTitle">${list[j]}</span> (<span class="tabUrl">${url}</span>)</a>
-                    <div class = "listBtnContainer">
-                        <button id="${j}" type="button" class="listButtons copyBtns">Copy</button>
-                        <button id="${j}" type="button" class="listButtons dltBtn">Delete</button>
+                <li class = "list-item" id="list-item-${j}">
+                    <a href="${url}" target="_blank"><span class= "tabTitle">${list[j]}</span> <span class="tabUrl">${url}</span></a>
+                    <div class = "listBtnBox">
+                        <button id="${j}" type="button" class="listButtons copyBtns"><i class="fa-solid fa-copy list-icons icon-copy"></i>Copy</button>
+                        <button id="${j}" type="button" class="listButtons removeBtns"><i class="fa-solid fa-trash list-icons icon-remove"></i>Remove</button>
+                        <button id="${j}" type="button" class="listButtons renameBtns"><i class="fa-solid fa-pen-to-square list-icons icon-rename"></i>Rename</button>
                     </div>
                 </li>`
             }
-            // URLprint(list, j, url, listItem)
         }
         ul.innerHTML = listItem
     }
@@ -99,57 +138,119 @@ for (let copyBtn of copyBtns){
         const area = document.createElement('textarea');
         body.appendChild(area);
 
-        area.value = links[this.id - 1];
+        area.value = urlListOne[this.id - 1];
         navigator.clipboard.writeText(area.value)
-        this.innerText = "Copied!"
+        this.innerHTML = `<i class="fa-solid fa-square-check list-icons"></i></i>Copied!`
 
         body.removeChild(area);
         setTimeout(function(){
-            copyBtn.innerText = "Copy"
+            copyBtn.innerHTML = `<i class="fa-solid fa-copy list-icons icon-copy"></i>Copy`
         }, 2000)
     })
 }
 
-for (let deleteBtn of deleteBtns){
-    deleteBtn.addEventListener("click", function(){
+for (let removeBtn of removeBtns){
+    removeBtn.addEventListener("click", function(){
         let index = this.id
-
-        //For adding undo function
-        // 1. Store every undo in a array with index position equal to the delete button id
-        // 2. Change list item id to deleted and give it delete button id
-        // 3. If undo button is clicked, change ul html to undo array element with index equal to undo button clicked
-        // 4. Set timeout function 3 seconds for every list item after which if list item id is equal to deleted then delete the list and clear from local storage
-
-        undo[index] = document.getElementById(`list-item-${index}`).innerHTML
-        let height = document.getElementById(`list-item-${index}`).clientHeight
-        document.getElementById(`list-item-${index}`).innerHTML = `
-            <span class="text-deleted">Deleted</span>
-            <button class="undo" id="undo-${index}">Undo</button>`
-        document.getElementById(`list-item-${index}`).style.height = `${height-10}px`
-        document.getElementById(`list-item-${index}`).id = `deleted-${index}`
-
-        document.getElementById(`undo-${index}`).addEventListener("click", ()=>{
-            document.getElementById(`deleted-${index}`).innerHTML = undo[index]
-            document.getElementById(`deleted-${index}`).id = `list-item-${index}`
-            window.location.reload();
-        })
-
-        setTimeout(()=>{
-            if (document.getElementById(`undo-${index}`).parentElement.id == `deleted-${index}`){
-                links.splice(index - 1, 2)
-                render(links)
-                localStorage.setItem("links", JSON.stringify(links))
-                window.location.reload();
-            }
-        }, 2500)
-    });
+        urlListOne.splice(index - 1, 2)
+        render(urlListOne)
+        localStorage.setItem("urlListOne", JSON.stringify(urlListOne))
+        window.location.reload()
+    })
 }
 
-resetBtn.addEventListener("dblclick", function(){
-    localStorage.clear()
-    links = []
-    textArea.value = ""
-    ul.innerHTML = ""
-    render(links)
-})
+for (let renameBtn of renameBtns){
+    renameBtn.addEventListener("click", function(){
+        let index = this.id
+        let oldName = urlListOne[index]
+        let newName = prompt("Enter the new name")
+        if (newName){
+            urlListOne[index] = newName
+        } else {
+            urlListOne[index] = oldName
+        }
+        render(urlListOne)
+        localStorage.setItem("urlListOne", JSON.stringify(urlListOne))
+        window.location.reload()
+    })
+}
 
+// function openCity(evt, cityName) {
+//     let tabcontent = document.getElementsByClassName("render");
+//     for (let i = 0; i < tabcontent.length; i++) {
+//       tabcontent[i].style.display = "none";
+//     }
+//     let taburlList = document.getElementsByClassName("taburlList");
+//     for (i = 0; i < taburlList.length; i++) {
+//       taburlList[i].className = taburlList[i].className.replace(" active", "");
+//     }
+//     document.getElementById(cityName).style.display = "block";
+//     evt.currentTarget.className += " active";
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// resetBtn.addEventListener("dblclick", function(){
+//     localStorage.clear()
+//     urlListOne = []
+//     textArea.value = ""
+//     ul.innerHTML = ""
+//     render(urlListOne)
+// })
+
+//Replace below code with removeBtn snippet to add Undo function
+
+// for (let removeBtn of removeBtns){
+//     removeBtn.addEventListener("click", function(){
+//         let index = this.id
+
+//         //For adding undo function
+//         // 1. Store every undo in a array with index position equal to the delete button id
+//         // 2. Change list item id to deleted and give it delete button id
+//         // 3. If undo button is clicked, change ul html to undo array element with index equal to undo button clicked
+//         // 4. Set timeout function 3 seconds for every list item after which if list item id is equal to deleted then delete the list and clear from local storage
+
+//         undo[index] = document.getElementById(`list-item-${index}`).innerHTML
+//         let height = document.getElementById(`list-item-${index}`).clientHeight
+//         document.getElementById(`list-item-${index}`).innerHTML = `
+//             <span class="text-deleted">Deleted</span>
+//             <button class="undo" id="undo-${index}">Undo</button>`
+//         document.getElementById(`list-item-${index}`).style.height = `${height-10}px`
+//         document.getElementById(`list-item-${index}`).id = `deleted-${index}`
+
+//         document.getElementById(`undo-${index}`).addEventListener("click", ()=>{
+//             document.getElementById(`deleted-${index}`).innerHTML = undo[index]
+//             document.getElementById(`deleted-${index}`).id = `list-item-${index}`
+//             window.location.reload();
+//         })
+
+//         setTimeout(()=>{
+//             if (document.getElementById(`undo-${index}`).parentElement.id == `deleted-${index}`){
+//                 urlListOne.splice(index - 1, 2)
+//                 render(urlListOne)
+//                 localStorage.setItem("urlListOne", JSON.stringify(urlListOne))
+//                 window.location.reload();
+//             }
+//         }, 2500)
+//     });
+// }
+
+// For Dropdown
+// <button id="${j}" type="button" class = "dropdown-icon"><i class="fa-solid fa-square-caret-down"></i></button>
