@@ -93,7 +93,7 @@ button:hover{
 }
 
 #note{
-    margin: 0;
+    margin: 2;
     color: rgb(255, 0, 0);
     font-size: var(--var-font-size);
     font-style: italic;
