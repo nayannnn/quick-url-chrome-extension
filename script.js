@@ -32,9 +32,6 @@ for (let tab of tabs){
             tab.classList.remove("active")
         }
         this.classList.add("active")
-        tabCache[0] = this.indexOf()
-        console.log(tabCache[0])
-        localStorage.setItem("tabCache", JSON.stringify(tabCache))
         document.getElementById("ul-el").style.display = "none"
     })
 }

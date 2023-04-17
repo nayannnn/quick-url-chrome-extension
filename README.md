@@ -1,1 +1,1 @@
-Quickly save and remove your URLs.
+Quickly save and remove your favourite URLs.
