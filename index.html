@@ -7,6 +7,7 @@
     <title>Quick URLs</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fontawesomefonts/css/all.css">
+    <link rel="shortcut icon" href="Icons/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <script type="module" src="script.js"></script>
@@ -19,26 +20,60 @@
             <p id="or">OR</p>
         </div>
         <div id="save-url">
-            <input placeholder= "Paste your URL here and press Enter." type="text" id = "textArea">
+            <input autofocus="autofocus" placeholder= "Paste your URL here and press Enter." type="text" id = "textArea">
         </div>
         <button id="saveURLButton" style="display: none;">Save URL</button>
-        <p id="note"></p>
-        <p id="previousLinksText">Previously Saved Links:</p>
-        <div class="linkContainer">
-            <div id="allLinks">
-                <ul id="ul-el"></ul>
+        <p class= "note" id="note"></p>
+        <div class="heading">
+            <p id="previousLinksText">Previously Saved Links</p>
+            <div class="more-btn-container" id="more-btn-container">
+                <button class="more-btn"><i class="fa-solid fa-ellipsis"></i></button>
+                <ul id="more-btns-container">
+                    <li class="more-btns" id="add-new-list-btn">Add new list</li>
+                    <li class="more-btns" id="rename-list-btn">Rename this list</li>
+                    <li class="more-btns" id="remove-list-btn">Remove this list</li>
+                </ul>
             </div>
-            <ul class="linkTabs">
-                <li class="tab-list"><button class="tab" id="tab1">List 1</button></li>
-                <li class="tab-list"><button class="tab" id="tab2">List 2</button></li>
-                <li class="tab-list"><button class="tab" id="tab3">List 3</button></li>
-                <li class="tab-list"><button class="tab" id="tab4">List 4</button></li>
-            </ul>
         </div>
+        <div class="linkContainer">
+            <div class="tabs-container">
+                <button class="arrow" id="left-arrow"><i class="fa-solid fa-chevron-left" ></i></button>
+                <ul class="linkTabs"></ul>
+                <button class="arrow" id="right-arrow"><i class="fa-solid fa-chevron-right" ></i></button>
+            </div>
+            <div id="allLinks">
+                <div id="link-list" style="width: 100%"></div>
+                <dialog class="modal rename-url-modal" id="rename-url-modal">
+                    <p class="modal-heading" id="rename-url-modal-heading">Rename</p>
+                    <div>
+                        <input placeholder="Type and press Enter." type="text" id="rename-url-input-box">
+                        <button id="rename-url-save-button" type="submit">Save</button>
+                    </div>
+                    <button class="modal-close" id="rename-url-cancel-button" type="button">Cancel</button>
+                </dialog>
+            </div>
+        </div>
+
+        <dialog class="modal rename-list-modal" id="rename-list-modal">
+            <p class="modal-heading" id="rename-list-modal-heading">Rename</p>
+            <div>
+                <input placeholder="Type and press Enter." type="text" id="rename-list-input-box">
+                <button id="rename-list-save-button" type="submit">Save</button>
+            </div>
+            <button class="modal-close" id="rename-list-cancel-button" type="button">Cancel</button>
+        </dialog>
+
+        <dialog class="modal remove-list-modal" id="remove-list-modal">
+            <p class="modal-heading" id="remove-list-modal-heading" style="text-align: center;">Type to remove this list</p>
+            <div>
+                <input placeholder="Type remove and press Enter." type="text" id="remove-list-input-box">
+                <button id="remove-list-yes-button" type="submit">Remove</button>
+            </div>
+            <button class="modal-close" id="remove-list-cancel-button" type="button">I don't want to remove</button>
+        </dialog>
     </div>
     <div id="footer">
         <p class="footerText">quick url extension by nyn</p>
     </div>
-    
 </body>
 </html>

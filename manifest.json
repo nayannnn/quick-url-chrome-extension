@@ -16,5 +16,5 @@
     "48": "Icons/bookmark.png",
     "128": "Icons/bookmark.png"
   },
-  "permissions": ["tabs"]
+  "permissions": ["tabs", "favicon"]
 }
