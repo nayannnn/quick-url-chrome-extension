@@ -12,27 +12,37 @@
 <body>
     <script type="module" src="script.js"></script>
     <div class="container">
+        <p class="already-saved" id="already-saved" style="display: none;"><i class="fa-solid fa-circle-info"></i> Currently opened tab is already saved in </p>
         <div id="header">
-            <!-- <h1>Quick URLs</h1> -->
             <button id="saveTab">Save current tab</button>
         </div>
-        <div>
+        <div id="save-url" style="display: none;">
+            <input autofocus="autofocus" placeholder= "Paste your URL here and press Enter." type="text" id = "textArea" autocomplete="off">
+            <button class="save-btn" id="saveURLButton">Save URL</button>
+        </div>
+        <div class="simple-box">
+            <button class="add-manually simple-btn" id="add-manually">Add manually</button>
+            <button class="cancel-manually simple-btn" id="cancel-manually" style="display: none;">Cancel</button>
+        </div>
+        <!-- <div>
             <p id="or">OR</p>
-        </div>
-        <div id="save-url">
-            <input autofocus="autofocus" placeholder= "Paste your URL here and press Enter." type="text" id = "textArea">
-        </div>
-        <button id="saveURLButton" style="display: none;">Save URL</button>
-        <p class= "note" id="note"></p>
+        </div> -->
         <div class="heading">
             <p id="previousLinksText">Previously Saved Links</p>
-            <div class="more-btn-container" id="more-btn-container">
-                <button class="more-btn"><i class="fa-solid fa-ellipsis"></i></button>
-                <ul id="more-btns-container">
-                    <li class="more-btns" id="add-new-list-btn">Add new list</li>
-                    <li class="more-btns" id="rename-list-btn">Rename this list</li>
-                    <li class="more-btns" id="remove-list-btn">Remove this list</li>
-                </ul>
+            <div class="tab-list-more-btn-container">
+                <div class="menu" id="tab-list-container">
+                    <button class="menu-btn simple-btn">List 1 &nbsp;<i class="fa-solid fa-caret-down"></i></button>
+                    <ul class="menu-container scrollbar" id="tab-lists-container">
+                    </ul>
+                </div>
+                <div class="menu" id="more-btn-container">
+                    <button class="menu-btn simple-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                    <ul class="menu-container" id="more-btns-container">
+                        <li class="more-btns" id="add-new-list-btn">Add new list</li>
+                        <li class="more-btns" id="rename-list-btn">Rename this list</li>
+                        <li class="more-btns" id="remove-list-btn">Remove this list</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="linkContainer">
@@ -41,13 +51,13 @@
                 <ul class="linkTabs"></ul>
                 <button class="arrow" id="right-arrow"><i class="fa-solid fa-chevron-right" ></i></button>
             </div>
-            <div id="allLinks">
+            <div class = "scrollbar" id="allLinks">
                 <div id="link-list" style="width: 100%"></div>
                 <dialog class="modal rename-url-modal" id="rename-url-modal">
                     <p class="modal-heading" id="rename-url-modal-heading">Rename</p>
                     <div>
-                        <input placeholder="Type and press Enter." type="text" id="rename-url-input-box">
-                        <button id="rename-url-save-button" type="submit">Save</button>
+                        <input placeholder="Type and press Enter." type="text" id="rename-url-input-box" autocomplete="off">
+                        <button class="save-btn" id="rename-url-save-button" type="submit">Save</button>
                     </div>
                     <button class="modal-close" id="rename-url-cancel-button" type="button">Cancel</button>
                 </dialog>
@@ -57,8 +67,8 @@
         <dialog class="modal rename-list-modal" id="rename-list-modal">
             <p class="modal-heading" id="rename-list-modal-heading">Rename</p>
             <div>
-                <input placeholder="Type and press Enter." type="text" id="rename-list-input-box">
-                <button id="rename-list-save-button" type="submit">Save</button>
+                <input placeholder="Type and press Enter." type="text" id="rename-list-input-box" autocomplete="off">
+                <button class="save-btn" id="rename-list-save-button" type="submit">Save</button>
             </div>
             <button class="modal-close" id="rename-list-cancel-button" type="button">Cancel</button>
         </dialog>
@@ -66,8 +76,8 @@
         <dialog class="modal remove-list-modal" id="remove-list-modal">
             <p class="modal-heading" id="remove-list-modal-heading" style="text-align: center;">Type to remove this list</p>
             <div>
-                <input placeholder="Type remove and press Enter." type="text" id="remove-list-input-box">
-                <button id="remove-list-yes-button" type="submit">Remove</button>
+                <input placeholder="Type remove and press Enter." type="text" id="remove-list-input-box" autocomplete="off">
+                <button class="save-btn" id="remove-list-yes-button" type="submit" >Remove</button>
             </div>
             <button class="modal-close" id="remove-list-cancel-button" type="button">I don't want to remove</button>
         </dialog>

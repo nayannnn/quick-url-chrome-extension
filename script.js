@@ -1,7 +1,16 @@
+/* Checklist when page refreshes
+1. Check if tab details are stored in local storage. If yes, then print the details. If no, then create 4 lists and print. Disable right click on them
+2. Print the details in dropdown menu too.
+3. If there are more than 4 tabs stored, then decrease the width of tabs to 22%, else it is 25%
+4. Check if tab number is stored in local storage, if yes then make that tab active. Else, make first tab active
+5. Print the list corresponding to the tab number opened. If currently opened tab is already saved in any list then show the notification that its saved.
+6. Add copy, rename and remove functions to links
+*/
+
 import {URLcheck} from '/url-print-check.js'
 
-let tabCache, tabCount
-let listnames = []
+let tabCache, tabCount, ul
+let allLists = []
 let tabDetails = [""]
 let textArea = document.getElementById("textArea")
 const saveURLBtn = document.getElementById("saveURLButton")
@@ -13,56 +22,138 @@ const tabs = document.getElementsByClassName("tab")
 
 //Printing all the list tabs by getting info from local storage
 //If it doesn't exist then print 4 list tabs and save in local storage
+
 if (JSON.parse(localStorage.getItem("tabDetails"))){
     tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
     tabCount = tabDetails.length
     for (let i=0; i<tabCount; i++){
-        document.getElementsByClassName("linkTabs")[0].innerHTML += `
-        <li class="tab-list"><button class="tab" id="${i+1}">${tabDetails[i]}</button></li>`
+        if (tabDetails[i].length < 12){
+            document.getElementsByClassName("linkTabs")[0].innerHTML += `
+            <li class="tab-list" title="${tabDetails[i]}"><button class="tab" id="${i+1}"><i class="fa-solid fa-circle not-empty-dot empty"></i> ${tabDetails[i]}</button></li>`
+        } else {
+            document.getElementsByClassName("linkTabs")[0].innerHTML += `
+            <li class="tab-list" title="${tabDetails[i]}"><button class="tab" id="${i+1}"><i class="fa-solid fa-circle not-empty-dot empty"></i> ${tabDetails[i].slice(0,10)}..</button></li>`
+        }
         document.getElementById("link-list").innerHTML += `
-        <ul id="ul-el-${i+1}"></ul>`
+        <ul id="ul-${i+1}"></ul>`
     }
 } else {
-    tabDetails = ["List 1", "List 2", "List 3", "List 4"]
+    tabDetails = ["List 1", "List 2", "List 3", "List 4", "List 5"]
     localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
     tabCount = tabDetails.length
     for (let i=0; i<tabCount; i++){
         document.getElementsByClassName("linkTabs")[0].innerHTML += `
-            <li class="tab-list"><button class="tab" id="${i+1}">${tabDetails[i]}</button></li>`
+            <li class="tab-list"><button class="tab" id="${i+1}"><i class="fa-solid fa-circle not-empty-dot empty"></i> ${tabDetails[i]}</button></li>`
         document.getElementById("link-list").innerHTML += `
-            <ul id="ul-el-${i+1}"></ul>`
+            <ul id="ul-${i+1}"></ul>`
     }
 }
 
-//Changing width of tabs if tab count is more than 4
-if (tabCount === 4){
-    document.getElementsByClassName("linkTabs")[0].style.gridAutoColumns = "25%"
-}  else {
-    document.getElementsByClassName("linkTabs")[0].style.gridAutoColumns = "22%"
-}
-
-//Restoring scroll position of tab menu by getting info from local storage
-document.getElementsByClassName("linkTabs")[0].scrollLeft = 122.5*((JSON.parse(localStorage.getItem("tabCache")))-1)
-
-setTimeout(function(){
-    if (JSON.parse(localStorage.getItem("scrollpos"))){
-        document.getElementById("allLinks").scrollTop = JSON.parse(localStorage.getItem("scrollpos"))
-    }
-}, 50)
+document.getElementsByClassName("linkTabs")[0].scrollLeft = 80*((JSON.parse(localStorage.getItem("tabCache")))-1)
 
 // Making lists in local storage for every tab
-for (let i = 0; i< tabDetails.length; i++){
-    if (JSON.parse(localStorage.getItem(listnames[i]))){
-
-    } else {
-        listnames.push([])
-        localStorage.setItem(`listnames`, JSON.stringify(listnames))
+if (!JSON.parse(localStorage.getItem("allLists"))){
+    for (let i = 0; i< tabDetails.length; i++){
+        allLists.push([""])
+        localStorage.setItem(`allLists`, JSON.stringify(allLists))
     }
 }
 
-document.getElementsByClassName("linkTabs")[0].addEventListener("contextmenu", function(){
-    event.preventDefault();
+// document.getElementsByClassName("linkTabs")[0].addEventListener("contextmenu", function(){
+//     event.preventDefault();
+// })
+
+function rightClickMenuTabs(){
+
+}
+
+const allTabs = document.getElementsByClassName("linkTabs")[0]
+const leftArrow = document.getElementById("left-arrow")
+const rightArrow = document.getElementById("right-arrow")
+
+if (allTabs.scrollWidth > "490"){
+    leftArrow.style.display = "flex"
+    rightArrow.style.display = "flex"
+}
+
+leftArrow.click()
+rightArrow.click()
+
+tabScroll()
+    
+function tabScroll(){
+    let scrollTab = allTabs.scrollLeft
+    tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
+    // if (tabDetails.length === 5){
+    //     leftArrow.classList.add("no-scroll")
+    //     rightArrow.classList.add("no-scroll")
+    // }
+    if (scrollTab === 0 && tabCache === 1){
+        leftArrow.classList.add("no-scroll")
+        rightArrow.classList.remove("no-scroll")
+    } else {
+        if (tabCache === tabDetails.length){
+            leftArrow.classList.remove("no-scroll")
+            rightArrow.classList.add("no-scroll")
+        } else {
+            leftArrow.classList.remove("no-scroll")
+            rightArrow.classList.remove("no-scroll")
+        }
+    }
+}
+    
+allTabs.onscroll=function(){
+    tabScroll()
+}
+
+leftArrow.addEventListener("click", function(){
+    allTabs.scrollLeft += -80
+    if (tabs[tabCache-2])
+        tabs[tabCache-2].click()
+    if (JSON.parse(localStorage.getItem("tabCache")) != 1){
+        leftArrow.classList.remove("no-scroll")
+    } else {
+        leftArrow.classList.add("no-scroll")
+    }
+    rightArrow.classList.remove("no-scroll")
 })
+
+rightArrow.addEventListener("click", function(){
+    allTabs.scrollLeft += 80
+    if (tabs[tabCache])
+        tabs[tabCache].click()
+    if (tabCache != tabDetails.length){
+        rightArrow.classList.remove("no-scroll")
+    } else {
+        rightArrow.classList.add("no-scroll")
+    }
+    leftArrow.classList.remove("no-scroll")
+})
+
+//Show a note if currently opened tab is also saved in any of lists
+// chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+//     let count=0, listCount=0, linkInListCount = 0, previousListIndex = ""
+//     allLists = JSON.parse(localStorage.getItem("allLists"))
+//     for (let list of allLists){
+//         for (let link of list){
+//             if(tabs[0].title === link){
+//                 count = count+1
+//                 linkInListCount += 1
+//                 document.getElementById("already-saved").classList.add("show")
+//                 if (count === 1) {
+//                     listCount += 1
+//                     document.getElementById("already-saved").innerHTML += `<span class="already-saved-list-name" id="saved-list-index-${allLists.indexOf(list)}"><b>${tabDetails[allLists.indexOf(list)]}`
+//                     previousListIndex = allLists.indexOf(list)
+//                 } else if (previousListIndex != allLists.indexOf(list)) {
+//                     listCount += 1
+//                     document.getElementById("already-saved").innerHTML += `, <span class="already-saved-list-name" id="saved-list-index-${allLists.indexOf(list)}"><b>${tabDetails[allLists.indexOf(list)]}`                    
+//                     previousListIndex = allLists.indexOf(list)
+//                 }
+//             }
+//         }
+//     }
+//     document.getElementById("already-saved").innerHTML += "."
+// })
 
 //For every URL saved, two indexes are used in the 'list1' array.
 //First index is used for saving the link.
@@ -73,25 +164,47 @@ document.getElementById("saveTab").addEventListener("click", function(){
     chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
         for (let i=0; i < tabDetails.length; i++){
             if (document.getElementsByClassName("tab")[i].classList.contains("active")){
-                listnames[i].unshift(`${tabs[0].title}`);
-                listnames[i].unshift(`${tabs[0].url}`);
-                render(listnames[i])
-                localStorage.setItem("listnames", JSON.stringify(listnames))
-                // window.location.reload();
+                allLists[i].unshift(`${tabs[0].title}`);
+                allLists[i].unshift(`${tabs[0].url}`);
+                render(allLists[i])
+                render(allLists[(JSON.parse(localStorage.getItem("tabCache"))) - 1])
+                document.getElementById(`ul-${JSON.parse(localStorage.getItem("tabCache"))}`).innerHTML = ul
+                localStorage.setItem("allLists", JSON.stringify(allLists))
+                window.location.reload();
             }
         }
+    })
+})
+
+const addManually = document.getElementById("add-manually")
+const cancelAddManually = document.getElementById("cancel-manually")
+
+//Add manually
+addManually.addEventListener("click", function(){
+    addManually.style.display = "none"
+    document.getElementById("saveTab").style.display = "none"
+    document.getElementById("save-url").style.display = "flex"
+    textArea.focus()
+    cancelAddManually.style.display = "block"
+    cancelAddManually.addEventListener("click", function(){
+        cancelAddManually.style.display = "none"
+        addManually.style.display = "block"
+        document.getElementById("save-url").style.display = "none"
+        document.getElementById("saveTab").style.display = "block"
     })
 })
 
 //Save URL from input placeholder
 saveURLBtn.addEventListener("click", function(){
     if ( textArea.value && textArea.value.indexOf(" ") !=0 ){
-        if (document.getElementsByClassName("tab")[0].classList.contains("active")){
-            URLcheck(listnames[0])
-            render(listnames[0])
-            localStorage.setItem("listnames", JSON.stringify(listnames))
-            textArea.value = ""
-            window.location.reload();
+        for (let i=0; i < tabDetails.length; i++){
+            if (document.getElementsByClassName("tab")[i].classList.contains("active")){
+                URLcheck(allLists[i])
+                render(allLists[i])
+                localStorage.setItem("allLists", JSON.stringify(allLists))
+                textArea.value = ""
+                window.location.reload();
+            }
         }
     } else {
         document.getElementById("note").style.display = "block"
@@ -110,20 +223,56 @@ textArea.addEventListener("keypress", function(event) {
     }
 })
 
+//Opening and closing Tab lists dropdown menu
+document.querySelector("#tab-list-container").addEventListener("click", function(){
+    if (document.querySelector("#tab-lists-container").classList.contains("open")){
+        document.querySelector("#tab-lists-container").classList.remove("open") 
+    } else {
+        document.querySelector("#tab-lists-container").classList.add("open")
+        for (let dropList of document.getElementsByClassName("dropdown-menu-tab")){
+            dropList.classList.remove("selected")
+            dropList.addEventListener("click", function(){                
+                tabCache = dropList.id.slice(-1)
+                localStorage.setItem("tabCache", JSON.stringify(tabCache))
+                tabs[tabCache - 1].click()
+            })
+        }
+        document.getElementById(`dropdown-menu-tab-${tabCache}`).classList.add("selected")
+    }
+})
+
+//Printing list of tabs in tab lists dropdown menu
+let tabId=1
+for (let tab of tabDetails){
+    if (tab.length < 9){
+        document.querySelector("#tab-lists-container").innerHTML += `
+        <li class="dropdown-menu-tab dropdown-active" id="dropdown-menu-tab-${tabId}" title="${tab}">${tab} <i class="fa-solid fa-circle not-empty-dot empty"></i></li>`
+    } else {
+        document.querySelector("#tab-lists-container").innerHTML += `
+        <li class="dropdown-menu-tab dropdown-active" id="dropdown-menu-tab-${tabId}" title="${tab}">${tab.slice(0,7)}... <i class="fa-solid fa-circle not-empty-dot empty"></i></li>`
+    }
+    tabId = tabId + 1
+}
+
 //Opening and closing more options menu
 document.querySelector("#more-btn-container").addEventListener("click", function(){
     if (document.querySelector("#more-btns-container").classList.contains("open")){
         document.querySelector("#more-btns-container").classList.remove("open") 
     } else {
-        document.querySelector("#more-btns-container").classList += "open"
+        document.querySelector("#more-btns-container").classList.add("open")
     }
 })
 
-//Closing more options menu by clicking outside of the container
+//Closing more options menu or tab list container by clicking outside of the container
 document.addEventListener("click", function(event){
     if (document.querySelector("#more-btns-container").classList.contains("open")){
         if(!document.querySelector("#more-btn-container").contains(event.target)){
             document.querySelector("#more-btns-container").classList.remove("open")
+        }
+    }
+    if (document.querySelector("#tab-lists-container").classList.contains("open")){
+        if(!document.querySelector("#tab-list-container").contains(event.target) || document.querySelector("#tab-lists-container").contains(event.target)){
+            document.querySelector("#tab-lists-container").classList.remove("open")
         }
     }
 })
@@ -132,6 +281,8 @@ document.addEventListener("click", function(event){
 document.getElementById("add-new-list-btn").addEventListener("click", function(){
     tabDetails.push(`New List`)
     localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
+    allLists.push([""])
+    localStorage.setItem(`allLists`, JSON.stringify(allLists))
     window.location.reload()
 })
 
@@ -163,7 +314,7 @@ renameListBtn.addEventListener("click", function(){
                 document.getElementsByClassName("linkTabs")[0].innerHTML += `
                 <li class="tab-list"><button class="tab" id="${i+1}">${tabDetails[i]}</button></li>`
                 document.getElementById("link-list").innerHTML += `
-                <ul id="ul-el-${i+1}"></ul>`
+                <ul id="ul-${i+1}"></ul>`
             }
             renameListModal.close()
             window.location.reload()
@@ -204,10 +355,13 @@ removeListBtn.addEventListener("click", function(){
         if (removeListInput.value === "remove"){
             tabDetails.splice(index-1, 1)
             localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
-            if ((index-1) === 0){
-                localStorage.removeItem("listnames[0]")
-            }
             removeListInput.value = ""
+            allLists.splice(index-1, 1)
+            localStorage.setItem("allLists", JSON.stringify(allLists))
+            tabCount = JSON.parse(localStorage.getItem("tabDetails")).length
+            if (tabCount<4){
+                document.getElementById("add-new-list-btn").click()
+            }
             window.location.reload()
         } else {
             removeListInput.style.border = "2px solid red"
@@ -225,23 +379,16 @@ removeListBtn.addEventListener("click", function(){
     })
 })
 
-//If a list is removed, and total count of lists get less than 4, then add a new list
-if (tabCount<4){
-    tabDetails.push("New list")
-    localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
-    window.location.reload()
-}
-
 //Storing the tab number that is currently active so that it gets opened in next session
 if (JSON.parse(localStorage.getItem("tabCache"))){
     setTimeout(function(){
         tabCache = JSON.parse(localStorage.getItem("tabCache"))
         tabs[tabCache - 1].click()
-    }, 100)
+    }, 50)
 } else {
     setTimeout(function(){
         tabs[0].click()
-    }, 100)
+    }, 50)
 }
 
 //If tab number stored in local storage becomes more than actual tab count, then make first list active
@@ -251,26 +398,32 @@ if (JSON.parse(localStorage.getItem("tabCache")) > tabDetails.length){
     tabs[tabCache - 1].click()
 }
 
+allLists = JSON.parse(localStorage.getItem("allLists"))
+
 //Opening the list according to the active tab
 for (let tab of tabs){
+    render(allLists[tab.id - 1])
+    document.getElementById(`ul-${tab.id}`).innerHTML = ul
     tab.addEventListener("click", function(){
         tabCache = this.id
         localStorage.setItem("tabCache", JSON.stringify(tabCache))
         for (let i=0; i<tabs.length; i++){
             tabs[i].classList.remove("active")
-            document.getElementById(`ul-el-${i+1}`).style.display = "none"
+            document.getElementById(`ul-${i+1}`).style.display = "none"
         }
-        document.getElementById(`ul-el-${(this.id)}`).style.display = "block"
+        render(allLists[(JSON.parse(localStorage.getItem("tabCache"))) - 1])
+        document.getElementById(`ul-${(this.id)}`).style.display = "block"
         this.classList.add("active")
+        document.getElementsByClassName("menu-btn")[0].innerHTML = `${tab.innerText} &nbsp;<i class="fa-solid fa-caret-down"></i>`
     })
 }
 
 //Print list if stored in local storage
-if (JSON.parse(localStorage.getItem("listnames"))){
-    listnames = JSON.parse(localStorage.getItem("listnames"))
-    render(listnames[0])
+if (allLists){
+    render(allLists[(JSON.parse(localStorage.getItem("tabCache"))) - 1])
+    document.getElementById(`ul-${JSON.parse(localStorage.getItem("tabCache"))}`).innerHTML = ul
 } else {
-    localStorage.setItem("listnames", JSON.stringify(listnames))
+    localStorage.setItem("allLists", JSON.stringify(allLists))
 }
 
 //Printing the list
@@ -315,21 +468,24 @@ function render(list){
                 </li>`
             }
         }
-        document.getElementById("ul-el-1").innerHTML = listItem
+        ul = listItem
     }
 }
 
-let index
+let index, listItemNo
+tabCache = JSON.parse(localStorage.getItem("tabCache"))
+allLists = JSON.parse(localStorage.getItem("allLists"))
 
 //Copy Button for URLs
+setTimeout(function(){
 for (let copyBtn of copyBtns){
     copyBtn.addEventListener("click", function(){
-        index = this.id
+        listItemNo = this.id
         const body = document.querySelector('body');
         const area = document.createElement('textarea');
         body.appendChild(area);
         
-        area.value = listnames[0][index - 1];
+        area.value = allLists[tabCache - 1][listItemNo - 1];
         navigator.clipboard.writeText(area.value)
         this.innerHTML = `<i class="fa-solid fa-square-check list-icons"></i></i>Copied`
 
@@ -351,15 +507,15 @@ for (let renameBtn of renameBtns){
     renameBtn.addEventListener("click", function(){
         renameURLmodal.showModal()
         index = this.id
-        renameURLHeading.innerHTML = `Rename URL: <span style="color: #2187e5;">${listnames[0][index]}</span>`
+        renameURLHeading.innerHTML = `Rename URL: <span style="color: #2187e5;">${allLists[tabCache - 1][index]}</span>`
         renameURLInputBox.focus()
         renameURLSaveBtn.addEventListener("click", function(){
             if (renameURLInputBox.value){
-                listnames[0][index] = renameURLInputBox.value
+                allLists[tabCache - 1][index] = renameURLInputBox.value
                 renameURLInputBox.value = ""
                 renameURLmodal.close()
-                render(listnames[0])
-                localStorage.setItem("listnames", JSON.stringify(listnames))
+                render(allLists[tabCache - 1])
+                localStorage.setItem("allLists", JSON.stringify(allLists))
                 window.location.reload()
             } else {
                 renameURLInputBox.style.border = "2px solid red"
@@ -381,13 +537,14 @@ for (let renameBtn of renameBtns){
 for (let removeBtn of removeBtns){
     removeBtn.addEventListener("click", function(){
         index = this.id
-        listnames[0].splice(index - 1, 2)
-        render(listnames[0])
-        localStorage.setItem("listnames", JSON.stringify(listnames))
+        allLists[tabCache - 1].splice(index - 1, 2)
+        render(allLists[tabCache - 1])
+        localStorage.setItem("allLists", JSON.stringify(allLists))
         localStorage.setItem('scrollpos', document.getElementById("allLinks").scrollTop);
         window.location.reload()
     })
 }
+}, 50)
 
 
 
