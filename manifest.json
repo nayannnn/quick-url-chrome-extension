@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Quick bookmarks",
-  "description": "Keeping track of frequently visited bookmarks made easy.",
+  "name": "LinkSaver: Private Bookmark",
+  "description": "Seamlessly maintain your own digital library, conveniently save and access your favorite links, all while protecting your privacy.",
   "version": "1.0",
   "action": {
     "default_popup": "index.html",

@@ -9,29 +9,32 @@
 
 import {URLcheck} from '/url-print-check.js'
 
-let tabCache, tabCount, ul
+let tabCount, ul
 let allLists = []
-let tabDetails = [""]
 let textArea = document.getElementById("textArea")
 const saveURLBtn = document.getElementById("saveURLButton")
 const removeBtns = document.getElementsByClassName("removeBtns")
 const copyBtns = document.getElementsByClassName("copyBtns")
 const renameBtns = document.getElementsByClassName("renameBtns")
 const tabs = document.getElementsByClassName("tab")
+const tabListsContainer = document.querySelector("#tab-lists-container")
+const allTabs = document.getElementsByClassName("linkTabs")[0]
 // let undo = [""]
+
+let tabCache = JSON.parse(localStorage.getItem("tabCache"))
+let tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
 
 //Printing all the list tabs by getting info from local storage
 //If it doesn't exist then print 4 list tabs and save in local storage
 
-if (JSON.parse(localStorage.getItem("tabDetails"))){
-    tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
+if (tabDetails){
     tabCount = tabDetails.length
     for (let i=0; i<tabCount; i++){
         if (tabDetails[i].length < 12){
-            document.getElementsByClassName("linkTabs")[0].innerHTML += `
+            allTabs.innerHTML += `
             <li class="tab-list" title="${tabDetails[i]}"><button class="tab" id="${i+1}"><i class="fa-solid fa-circle not-empty-dot empty"></i> ${tabDetails[i]}</button></li>`
         } else {
-            document.getElementsByClassName("linkTabs")[0].innerHTML += `
+            allTabs.innerHTML += `
             <li class="tab-list" title="${tabDetails[i]}"><button class="tab" id="${i+1}"><i class="fa-solid fa-circle not-empty-dot empty"></i> ${tabDetails[i].slice(0,10)}..</button></li>`
         }
         document.getElementById("link-list").innerHTML += `
@@ -42,14 +45,25 @@ if (JSON.parse(localStorage.getItem("tabDetails"))){
     localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
     tabCount = tabDetails.length
     for (let i=0; i<tabCount; i++){
-        document.getElementsByClassName("linkTabs")[0].innerHTML += `
+        allTabs.innerHTML += `
             <li class="tab-list"><button class="tab" id="${i+1}"><i class="fa-solid fa-circle not-empty-dot empty"></i> ${tabDetails[i]}</button></li>`
         document.getElementById("link-list").innerHTML += `
             <ul id="ul-${i+1}"></ul>`
     }
 }
 
-document.getElementsByClassName("linkTabs")[0].scrollLeft = 80*((JSON.parse(localStorage.getItem("tabCache")))-1)
+const leftArrow = document.getElementById("left-arrow")
+const rightArrow = document.getElementById("right-arrow")
+
+setTimeout(function(){
+    allTabs.scrollLeft = 99*(tabCache - 1)
+    if (tabCache === 1){
+        leftArrow.classList.add("no-scroll")
+    }
+    if (tabCache === tabDetails.length){
+        rightArrow.classList.add("no-scroll")
+    }
+}, 10)
 
 // Making lists in local storage for every tab
 if (!JSON.parse(localStorage.getItem("allLists"))){
@@ -59,58 +73,16 @@ if (!JSON.parse(localStorage.getItem("allLists"))){
     }
 }
 
-// document.getElementsByClassName("linkTabs")[0].addEventListener("contextmenu", function(){
-//     event.preventDefault();
-// })
-
-function rightClickMenuTabs(){
-
-}
-
-const allTabs = document.getElementsByClassName("linkTabs")[0]
-const leftArrow = document.getElementById("left-arrow")
-const rightArrow = document.getElementById("right-arrow")
-
 if (allTabs.scrollWidth > "490"){
     leftArrow.style.display = "flex"
     rightArrow.style.display = "flex"
 }
 
-leftArrow.click()
-rightArrow.click()
-
-tabScroll()
-    
-function tabScroll(){
-    let scrollTab = allTabs.scrollLeft
-    tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
-    // if (tabDetails.length === 5){
-    //     leftArrow.classList.add("no-scroll")
-    //     rightArrow.classList.add("no-scroll")
-    // }
-    if (scrollTab === 0 && tabCache === 1){
-        leftArrow.classList.add("no-scroll")
-        rightArrow.classList.remove("no-scroll")
-    } else {
-        if (tabCache === tabDetails.length){
-            leftArrow.classList.remove("no-scroll")
-            rightArrow.classList.add("no-scroll")
-        } else {
-            leftArrow.classList.remove("no-scroll")
-            rightArrow.classList.remove("no-scroll")
-        }
-    }
-}
-    
-allTabs.onscroll=function(){
-    tabScroll()
-}
-
 leftArrow.addEventListener("click", function(){
-    allTabs.scrollLeft += -80
+    allTabs.scrollLeft += -99
     if (tabs[tabCache-2])
         tabs[tabCache-2].click()
-    if (JSON.parse(localStorage.getItem("tabCache")) != 1){
+    if (tabCache != 1){
         leftArrow.classList.remove("no-scroll")
     } else {
         leftArrow.classList.add("no-scroll")
@@ -119,7 +91,7 @@ leftArrow.addEventListener("click", function(){
 })
 
 rightArrow.addEventListener("click", function(){
-    allTabs.scrollLeft += 80
+    allTabs.scrollLeft += 99
     if (tabs[tabCache])
         tabs[tabCache].click()
     if (tabCache != tabDetails.length){
@@ -130,30 +102,30 @@ rightArrow.addEventListener("click", function(){
     leftArrow.classList.remove("no-scroll")
 })
 
-//Show a note if currently opened tab is also saved in any of lists
-// chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-//     let count=0, listCount=0, linkInListCount = 0, previousListIndex = ""
-//     allLists = JSON.parse(localStorage.getItem("allLists"))
-//     for (let list of allLists){
-//         for (let link of list){
-//             if(tabs[0].title === link){
-//                 count = count+1
-//                 linkInListCount += 1
-//                 document.getElementById("already-saved").classList.add("show")
-//                 if (count === 1) {
-//                     listCount += 1
-//                     document.getElementById("already-saved").innerHTML += `<span class="already-saved-list-name" id="saved-list-index-${allLists.indexOf(list)}"><b>${tabDetails[allLists.indexOf(list)]}`
-//                     previousListIndex = allLists.indexOf(list)
-//                 } else if (previousListIndex != allLists.indexOf(list)) {
-//                     listCount += 1
-//                     document.getElementById("already-saved").innerHTML += `, <span class="already-saved-list-name" id="saved-list-index-${allLists.indexOf(list)}"><b>${tabDetails[allLists.indexOf(list)]}`                    
-//                     previousListIndex = allLists.indexOf(list)
-//                 }
-//             }
-//         }
-//     }
-//     document.getElementById("already-saved").innerHTML += "."
-// })
+// Show a note if currently opened tab is also saved in any of lists
+chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+    let count=0, listCount=0, linkInListCount = 0, previousListIndex = ""
+    allLists = JSON.parse(localStorage.getItem("allLists"))
+    for (let list of allLists){
+        for (let link of list){
+            if(tabs[0].title === link){
+                count = count+1
+                linkInListCount += 1
+                document.getElementById("already-saved").classList.add("show")
+                if (count === 1) {
+                    listCount += 1
+                    document.getElementById("already-saved").innerHTML += `<span class="already-saved-list-name" id="saved-list-index-${allLists.indexOf(list)}"><b>${tabDetails[allLists.indexOf(list)]}`
+                    previousListIndex = allLists.indexOf(list)
+                } else if (previousListIndex != allLists.indexOf(list)) {
+                    listCount += 1
+                    document.getElementById("already-saved").innerHTML += `, <span class="already-saved-list-name" id="saved-list-index-${allLists.indexOf(list)}"><b>${tabDetails[allLists.indexOf(list)]}`                    
+                    previousListIndex = allLists.indexOf(list)
+                }
+            }
+        }
+    }
+    document.getElementById("already-saved").innerHTML += "."
+})
 
 //For every URL saved, two indexes are used in the 'list1' array.
 //First index is used for saving the link.
@@ -167,8 +139,8 @@ document.getElementById("saveTab").addEventListener("click", function(){
                 allLists[i].unshift(`${tabs[0].title}`);
                 allLists[i].unshift(`${tabs[0].url}`);
                 render(allLists[i])
-                render(allLists[(JSON.parse(localStorage.getItem("tabCache"))) - 1])
-                document.getElementById(`ul-${JSON.parse(localStorage.getItem("tabCache"))}`).innerHTML = ul
+                render(allLists[(tabCache) - 1])
+                document.getElementById(`ul-${tabCache}`).innerHTML = ul
                 localStorage.setItem("allLists", JSON.stringify(allLists))
                 window.location.reload();
             }
@@ -225,164 +197,63 @@ textArea.addEventListener("keypress", function(event) {
 
 //Opening and closing Tab lists dropdown menu
 document.querySelector("#tab-list-container").addEventListener("click", function(){
-    if (document.querySelector("#tab-lists-container").classList.contains("open")){
-        document.querySelector("#tab-lists-container").classList.remove("open") 
+    if (tabListsContainer.classList.contains("open")){
+        tabListsContainer.classList.remove("open") 
     } else {
-        document.querySelector("#tab-lists-container").classList.add("open")
+        tabListsContainer.classList.add("open")
         for (let dropList of document.getElementsByClassName("dropdown-menu-tab")){
             dropList.classList.remove("selected")
+            if (dropList.innerText.length > 10){
+                dropList.innerText = `${dropList.innerText.slice(0,10)}...`
+            }
             dropList.addEventListener("click", function(){                
-                tabCache = dropList.id.slice(-1)
+                if (dropList.id.slice(-2) < 10) {
+                    tabCache = dropList.id.slice(-1)
+                } else {
+                    tabCache = dropList.id.slice(-2)
+                }
                 localStorage.setItem("tabCache", JSON.stringify(tabCache))
                 tabs[tabCache - 1].click()
+                allTabs.scrollLeft = 99*(tabCache - 1)
+                if (tabCache === 1){
+                    leftArrow.classList.add("no-scroll")
+                }
+                if (tabCache === tabDetails.length){
+                    rightArrow.classList.add("no-scroll")
+                }
             })
         }
         document.getElementById(`dropdown-menu-tab-${tabCache}`).classList.add("selected")
+        if (tabCache > 4){
+            tabListsContainer.scrollTop = 33*tabCache
+        }
     }
 })
+
+allTabs.addEventListener('wheel', function(e) {
+    e.preventDefault();
+  }, { passive: false });
 
 //Printing list of tabs in tab lists dropdown menu
 let tabId=1
 for (let tab of tabDetails){
-    if (tab.length < 9){
-        document.querySelector("#tab-lists-container").innerHTML += `
+        tabListsContainer.innerHTML += `
         <li class="dropdown-menu-tab dropdown-active" id="dropdown-menu-tab-${tabId}" title="${tab}">${tab} <i class="fa-solid fa-circle not-empty-dot empty"></i></li>`
-    } else {
-        document.querySelector("#tab-lists-container").innerHTML += `
-        <li class="dropdown-menu-tab dropdown-active" id="dropdown-menu-tab-${tabId}" title="${tab}">${tab.slice(0,7)}... <i class="fa-solid fa-circle not-empty-dot empty"></i></li>`
-    }
     tabId = tabId + 1
 }
 
-//Opening and closing more options menu
-document.querySelector("#more-btn-container").addEventListener("click", function(){
-    if (document.querySelector("#more-btns-container").classList.contains("open")){
-        document.querySelector("#more-btns-container").classList.remove("open") 
-    } else {
-        document.querySelector("#more-btns-container").classList.add("open")
-    }
-})
-
 //Closing more options menu or tab list container by clicking outside of the container
 document.addEventListener("click", function(event){
-    if (document.querySelector("#more-btns-container").classList.contains("open")){
-        if(!document.querySelector("#more-btn-container").contains(event.target)){
-            document.querySelector("#more-btns-container").classList.remove("open")
+    if (tabListsContainer.classList.contains("open")){
+        if(!document.querySelector("#tab-list-container").contains(event.target) || tabListsContainer.contains(event.target)){
+            tabListsContainer.classList.remove("open")
         }
     }
-    if (document.querySelector("#tab-lists-container").classList.contains("open")){
-        if(!document.querySelector("#tab-list-container").contains(event.target) || document.querySelector("#tab-lists-container").contains(event.target)){
-            document.querySelector("#tab-lists-container").classList.remove("open")
-        }
-    }
-})
-
-//Add new list button
-document.getElementById("add-new-list-btn").addEventListener("click", function(){
-    tabDetails.push(`New List`)
-    localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
-    allLists.push([""])
-    localStorage.setItem(`allLists`, JSON.stringify(allLists))
-    window.location.reload()
-})
-
-//Renaming title of lists
-const renameListBtn = document.getElementById("rename-list-btn")
-const renameListModal = document.getElementById("rename-list-modal")
-const renameListHeading = document.getElementById("rename-list-modal-heading")
-const renameListInput = document.getElementById("rename-list-input-box")
-const renameListSaveBtn = document.getElementById("rename-list-save-button")
-const closeRenameListModal = document.getElementById("rename-list-cancel-button")
-
-renameListBtn.addEventListener("click", function(){
-    let index
-    for (let tab of tabs){
-        if (tab.classList.contains("active")){
-            index = tab.id
-        }
-    }
-    renameListModal.showModal()
-    renameListHeading.innerHTML = `Rename list: <span style="color: #2187e5;">${tabDetails[index-1]}</span>`
-    renameListSaveBtn.addEventListener("click", function(){
-        if (renameListInput.value){
-            tabDetails[index-1] = renameListInput.value
-            renameListInput.value = ""
-            localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
-            tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
-            tabCount = tabDetails.length
-            for (let i=0; i<tabCount; i++){
-                document.getElementsByClassName("linkTabs")[0].innerHTML += `
-                <li class="tab-list"><button class="tab" id="${i+1}">${tabDetails[i]}</button></li>`
-                document.getElementById("link-list").innerHTML += `
-                <ul id="ul-${i+1}"></ul>`
-            }
-            renameListModal.close()
-            window.location.reload()
-        } else {
-            renameListInput.style.border = "2px solid red"
-        }
-    })
-    renameListInput.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-          event.preventDefault()
-          renameListSaveBtn.click()
-        }
-    })
-    closeRenameListModal.addEventListener("click", function(){
-        renameListModal.close()
-    })
-})
-
-//Removing a list by making user first type something in an input box
-const removeListBtn = document.getElementById("remove-list-btn")
-const removeListModal = document.getElementById("remove-list-modal")
-const removeListHeading = document.getElementById("remove-list-modal-heading")
-const removeListInput = document.getElementById("remove-list-input-box")
-const removeListYes = document.getElementById("remove-list-yes-button")
-const closeRemoveListModal = document.getElementById("remove-list-cancel-button")
-
-removeListBtn.addEventListener("click", function(){
-    let index
-    for (let tab of tabs){
-        if (tab.classList.contains("active")){
-            index = tab.id
-        }
-    }
-    removeListModal.showModal()
-    removeListHeading.innerHTML = `Type <span style= "color: #af1d1d;">remove</span> to remove <span style="color: #2187e5">${tabDetails[index-1]}</span> from your collection?`
-    removeListYes.addEventListener("click", function(){
-        tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
-        if (removeListInput.value === "remove"){
-            tabDetails.splice(index-1, 1)
-            localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
-            removeListInput.value = ""
-            allLists.splice(index-1, 1)
-            localStorage.setItem("allLists", JSON.stringify(allLists))
-            tabCount = JSON.parse(localStorage.getItem("tabDetails")).length
-            if (tabCount<4){
-                document.getElementById("add-new-list-btn").click()
-            }
-            window.location.reload()
-        } else {
-            removeListInput.style.border = "2px solid red"
-        }
-    })
-    removeListInput.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-          event.preventDefault()
-          removeListYes.click()
-        }
-    })
-    closeRemoveListModal.addEventListener("click", function(){
-        removeListInput.value = ""
-        removeListModal.close()    
-    })
 })
 
 //Storing the tab number that is currently active so that it gets opened in next session
-if (JSON.parse(localStorage.getItem("tabCache"))){
+if (tabCache){
     setTimeout(function(){
-        tabCache = JSON.parse(localStorage.getItem("tabCache"))
         tabs[tabCache - 1].click()
     }, 50)
 } else {
@@ -392,7 +263,7 @@ if (JSON.parse(localStorage.getItem("tabCache"))){
 }
 
 //If tab number stored in local storage becomes more than actual tab count, then make first list active
-if (JSON.parse(localStorage.getItem("tabCache")) > tabDetails.length){
+if (tabCache > tabDetails.length){
     tabCache = 1
     localStorage.setItem("tabCache", JSON.stringify(tabCache))
     tabs[tabCache - 1].click()
@@ -400,7 +271,7 @@ if (JSON.parse(localStorage.getItem("tabCache")) > tabDetails.length){
 
 allLists = JSON.parse(localStorage.getItem("allLists"))
 
-//Opening the list according to the active tab
+//Clicking the tab and opening the list according to the active tab
 for (let tab of tabs){
     render(allLists[tab.id - 1])
     document.getElementById(`ul-${tab.id}`).innerHTML = ul
@@ -411,17 +282,17 @@ for (let tab of tabs){
             tabs[i].classList.remove("active")
             document.getElementById(`ul-${i+1}`).style.display = "none"
         }
-        render(allLists[(JSON.parse(localStorage.getItem("tabCache"))) - 1])
+        document.getElementById(`dropdown-menu-tab-${tabCache}`).classList.add("selected")
+        render(allLists[tabCache - 1])
         document.getElementById(`ul-${(this.id)}`).style.display = "block"
         this.classList.add("active")
-        document.getElementsByClassName("menu-btn")[0].innerHTML = `${tab.innerText} &nbsp;<i class="fa-solid fa-caret-down"></i>`
     })
 }
 
 //Print list if stored in local storage
 if (allLists){
-    render(allLists[(JSON.parse(localStorage.getItem("tabCache"))) - 1])
-    document.getElementById(`ul-${JSON.parse(localStorage.getItem("tabCache"))}`).innerHTML = ul
+    render(allLists[(tabCache) - 1])
+    document.getElementById(`ul-${tabCache}`).innerHTML = ul
 } else {
     localStorage.setItem("allLists", JSON.stringify(allLists))
 }
@@ -473,7 +344,6 @@ function render(list){
 }
 
 let index, listItemNo
-tabCache = JSON.parse(localStorage.getItem("tabCache"))
 allLists = JSON.parse(localStorage.getItem("allLists"))
 
 //Copy Button for URLs
@@ -540,14 +410,137 @@ for (let removeBtn of removeBtns){
         allLists[tabCache - 1].splice(index - 1, 2)
         render(allLists[tabCache - 1])
         localStorage.setItem("allLists", JSON.stringify(allLists))
-        localStorage.setItem('scrollpos', document.getElementById("allLinks").scrollTop);
         window.location.reload()
     })
 }
 }, 50)
 
+//Add new list button
+const newListBtn = document.getElementById("add-new-list-btn")
+const newListModal = document.getElementById("add-new-list-modal")
+const newListInput = document.getElementById("add-new-list-input-box")
+const newListSaveBtn = document.getElementById("add-new-list-save-button")
+const closeNewListModal = document.getElementById("add-new-list-cancel-button")
 
+newListBtn.addEventListener("click", function(){
+    newListModal.showModal()
+    newListSaveBtn.addEventListener("click", function(){
+    if (newListInput.value){
+            tabDetails.push(newListInput.value)
+            localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
+            allLists.push([""])
+            localStorage.setItem("allLists", JSON.stringify(allLists))
+            tabCache = JSON.parse(localStorage.getItem("tabDetails")).length
+            localStorage.setItem(`tabCache`, JSON.stringify(tabCache))
+            window.location.reload()
+        } else {
+            newListInput.style.border = "2px solid red"
+        }
+    })
+    newListInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault()
+          newListSaveBtn.click()
+        }
+    })
+    closeNewListModal.addEventListener("click", function(){
+        newListModal.close()
+    })
+})
 
+//Renaming title of lists
+const renameListBtn = document.getElementById("rename-list-btn")
+const renameListModal = document.getElementById("rename-list-modal")
+const renameListHeading = document.getElementById("rename-list-modal-heading")
+const renameListInput = document.getElementById("rename-list-input-box")
+const renameListSaveBtn = document.getElementById("rename-list-save-button")
+const closeRenameListModal = document.getElementById("rename-list-cancel-button")
+
+renameListBtn.addEventListener("click", function(){
+    let index
+    for (let tab of tabs){
+        if (tab.classList.contains("active")){
+            index = tab.id
+        }
+    }
+    renameListModal.showModal()
+    renameListHeading.innerHTML = `Rename list: <span style="color: #2187e5;">${tabDetails[index-1]}</span>`
+    renameListSaveBtn.addEventListener("click", function(){
+        if (renameListInput.value){
+            tabDetails[index-1] = renameListInput.value
+            renameListInput.value = ""
+            localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
+            tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
+            tabCount = tabDetails.length
+            for (let i=0; i<tabCount; i++){
+                allTabs.innerHTML += `
+                <li class="tab-list"><button class="tab" id="${i+1}">${tabDetails[i]}</button></li>`
+                document.getElementById("link-list").innerHTML += `
+                <ul id="ul-${i+1}"></ul>`
+            }
+            renameListModal.close()
+            window.location.reload()
+        } else {
+            renameListInput.style.border = "2px solid red"
+        }
+    })
+    renameListInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault()
+          renameListSaveBtn.click()
+        }
+    })
+    closeRenameListModal.addEventListener("click", function(){
+        renameListModal.close()
+    })
+})
+
+//Removing a list by making user first type something in an input box
+const removeListBtn = document.getElementById("remove-list-btn")
+const removeListModal = document.getElementById("remove-list-modal")
+const removeListHeading = document.getElementById("remove-list-modal-heading")
+const removeListInput = document.getElementById("remove-list-input-box")
+const removeListYes = document.getElementById("remove-list-yes-button")
+const closeRemoveListModal = document.getElementById("remove-list-cancel-button")
+
+removeListBtn.addEventListener("click", function(){
+    let index
+    for (let tab of tabs){
+        if (tab.classList.contains("active")){
+            index = tab.id
+        }
+    }
+    removeListModal.showModal()
+    removeListHeading.innerHTML = `Type <span style= "color: #af1d1d;">remove</span> to remove <span style="color: #2187e5">${tabDetails[index-1]}</span> from your collection?`
+    removeListYes.addEventListener("click", function(){
+        tabDetails = JSON.parse(localStorage.getItem("tabDetails"))
+        if (removeListInput.value === "remove"){
+            tabDetails.splice(index-1, 1)
+            localStorage.setItem("tabDetails", JSON.stringify(tabDetails))
+            removeListInput.value = ""
+            allLists.splice(index-1, 1)
+            localStorage.setItem("allLists", JSON.stringify(allLists))
+            tabCount = tabDetails.length
+            if (tabCount<4){
+                document.getElementById("add-new-list-btn").click()
+            }
+            tabs[index-1].click()
+            window.location.reload()
+        } else {
+            removeListInput.style.border = "2px solid red"
+        }
+    })
+    removeListInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault()
+          removeListYes.click()
+        }
+    })
+    closeRemoveListModal.addEventListener("click", function(){
+        removeListInput.value = ""
+        removeListModal.close()    
+    })
+})
 
 
 

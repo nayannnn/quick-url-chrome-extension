@@ -12,7 +12,7 @@
 <body>
     <script type="module" src="script.js"></script>
     <div class="container">
-        <p class="already-saved" id="already-saved" style="display: none;"><i class="fa-solid fa-circle-info"></i> Currently opened tab is already saved in </p>
+        <p class="already-saved" id="already-saved" style="display: none;"><i class="fa-solid fa-circle-info"></i> Currently opened tab is saved in </p>
         <div id="header">
             <button id="saveTab">Save current tab</button>
         </div>
@@ -24,23 +24,12 @@
             <button class="add-manually simple-btn" id="add-manually">Add manually</button>
             <button class="cancel-manually simple-btn" id="cancel-manually" style="display: none;">Cancel</button>
         </div>
-        <!-- <div>
-            <p id="or">OR</p>
-        </div> -->
         <div class="heading">
             <p id="previousLinksText">Previously Saved Links</p>
             <div class="tab-list-more-btn-container">
                 <div class="menu" id="tab-list-container">
                     <button class="menu-btn simple-btn">List 1 &nbsp;<i class="fa-solid fa-caret-down"></i></button>
                     <ul class="menu-container scrollbar" id="tab-lists-container">
-                    </ul>
-                </div>
-                <div class="menu" id="more-btn-container">
-                    <button class="menu-btn simple-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                    <ul class="menu-container" id="more-btns-container">
-                        <li class="more-btns" id="add-new-list-btn">Add new list</li>
-                        <li class="more-btns" id="rename-list-btn">Rename this list</li>
-                        <li class="more-btns" id="remove-list-btn">Remove this list</li>
                     </ul>
                 </div>
             </div>
@@ -63,7 +52,20 @@
                 </dialog>
             </div>
         </div>
+        <div class="list-functions">
+            <button class="menu-btn simple-btn" id="add-new-list-btn"><i class="fa-solid fa-plus button-icons"></i>Add new list</button>
+            <button class="menu-btn simple-btn" id="rename-list-btn"><i class="fa-solid fa-pen-to-square button-icons"></i>Rename this list</button>
+            <button class="menu-btn simple-btn" id="remove-list-btn"><i class="fa-solid fa-trash button-icons"></i>Remove this list</button>
+        </div>
 
+        <dialog class="modal add-new-list-modal" id="add-new-list-modal">
+            <p class="modal-heading" id="add-new-list-modal-heading">Name your new list</p>
+            <div>
+                <input placeholder="Type the name and press Enter." type="text" id="add-new-list-input-box" autocomplete="off">
+                <button class="save-btn" id="add-new-list-save-button" type="submit">Save</button>
+            </div>
+            <button class="modal-close" id="add-new-list-cancel-button" type="button">Cancel</button>
+        </dialog>
         <dialog class="modal rename-list-modal" id="rename-list-modal">
             <p class="modal-heading" id="rename-list-modal-heading">Rename</p>
             <div>
@@ -72,7 +74,6 @@
             </div>
             <button class="modal-close" id="rename-list-cancel-button" type="button">Cancel</button>
         </dialog>
-
         <dialog class="modal remove-list-modal" id="remove-list-modal">
             <p class="modal-heading" id="remove-list-modal-heading" style="text-align: center;">Type to remove this list</p>
             <div>
