@@ -286,6 +286,7 @@ for (let tab of tabs){
         render(allLists[tabCache - 1])
         document.getElementById(`ul-${(this.id)}`).style.display = "block"
         this.classList.add("active")
+        document.getElementsByClassName("menu-btn")[0].innerHTML = `${tab.innerText} &nbsp;<i class="fa-solid fa-caret-down"></i>`
     })
 }
 

@@ -33,7 +33,7 @@ body{
     width: var(--var-width);
     margin-inline: auto;
     background-color: var(--var-bg-color);
-    padding: 12px 26px;
+    padding: 23px 26px;
     font-family: var(--var-font-family);
     font-size: var(--var-font-size);
     margin-block: 0;
@@ -59,13 +59,14 @@ button:hover{
 }
 
 .already-saved{
+    margin: 0;
     margin-bottom: 10px;
     color: grey;
 }
 
 #saveTab{
     font-size: var(--var-font-size);
-    margin-bottom: 10px;
+    margin-bottom: 13px;
 }
 
 .simple-btn{
@@ -328,7 +329,6 @@ a{
 }
 
 .tabUrl{
-    text-decoration: underline;
     color: #00000070;
 }
 
@@ -402,6 +402,7 @@ li:hover > .listBtnBox, a:focus-visible + .listBtnBox{
     text-align: left;
     width: 100%;
     font-size: 16px;
+    overflow-wrap: anywhere;
 }
 
 .modal div{
